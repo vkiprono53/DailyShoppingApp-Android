@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "749686883657",
+    "firebase_url": "https://shoppingapp-550a8.firebaseio.com",
+    "project_id": "shoppingapp-550a8",
+    "storage_bucket": "shoppingapp-550a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749686883657:android:ab1912ce9e469cf5f88698",
+        "android_client_info": {
+          "package_name": "com.kiprono.shoppingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "749686883657-83rdec6pbr0rfq02lagtpjqdddg4b856.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAll64lLVmCrGNJEqCOl0cL08roU5LT3Aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "749686883657-83rdec6pbr0rfq02lagtpjqdddg4b856.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
