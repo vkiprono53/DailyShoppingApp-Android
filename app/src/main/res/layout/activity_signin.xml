@@ -24,6 +24,8 @@
         android:textSize="26sp"
         android:textAlignment="center" />
 
+
+
     <EditText
         android:id="@+id/tvSigninEmail"
         android:layout_width="match_parent"

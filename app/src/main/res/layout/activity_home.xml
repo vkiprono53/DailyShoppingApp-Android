@@ -3,16 +3,98 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:gravity="center"
-    android:background="@android:color/holo_orange_dark"
     android:layout_height="match_parent"
+    android:background="@android:color/holo_orange_dark"
     tools:context="com.vkiprono.shoppingapp.HomeActivity">
 
-    <TextView
-        android:id="@+id/tvTitleHome"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:textSize="24sp"
-        android:layout_height="50dp"
-        android:textAlignment="center"
-        android:text="WELCOME HOME" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/homeCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:elevation="10dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            tools:targetApi="lollipop">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/homeTotalAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:paddingLeft="15dp"
+                        android:text="TOTAL AMT"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp">
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="15dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="0000"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeRecyclerView"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/homeFab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_gravity="end|bottom"
+            android:onClick="addShopping"
+            android:clickable="true"
+            android:src="@drawable/ic_fab_icon"
+             />
+
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:onClick="addShopping"
+            android:clickable="true"
+            android:src="@drawable/ic_fab_icon"
+            app:backgroundTint="#D81B60"
+            />-->
+    </LinearLayout>
+
+
 </RelativeLayout>

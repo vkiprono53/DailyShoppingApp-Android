@@ -2,6 +2,7 @@ package com.vkiprono.shoppingapp
 
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,8 +12,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -34,6 +37,7 @@ class SignupActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
         firebaseStorage = FirebaseStorage.getInstance()
+
     }
 
     fun signin(view: View) {
@@ -47,20 +51,36 @@ class SignupActivity : AppCompatActivity() {
         val email = tvSignupEmail.text.toString()
         val password = etSignupPassword.text.toString()
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(applicationContext, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
+        if (username.isEmpty()) {
+            etSignupName.error = "Name required"
+        }
+
+        if (email.isEmpty()) {
+            tvSignupEmail.error = "Email required"
+            return
+        }
+        if (password.isEmpty()) {
+            etSignupPassword.error = "Password required"
             return
         }
 
+
         firebaseAuth!!.createUserWithEmailAndPassword(email, password)
+
             .addOnCompleteListener { task ->
+
                 if (task.isSuccessful) {
 
                     uploadImage()
 
                     Log.d("CREATING", "SUCCESSFULLY CREATED USER")
 
-                    Toast.makeText(applicationContext,"Account Successfully created..Log in ",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "Account Successfully created..Log in ",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
 
                     val intent = Intent(applicationContext, SigninActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -69,6 +89,7 @@ class SignupActivity : AppCompatActivity() {
             }.addOnFailureListener { exception ->
                 Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_SHORT)
                     .show()
+
             }
     }
 
@@ -119,7 +140,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun uploadImage() {
-        Log.d("SIGNUP","BEGINNING TO UPLOAD IMAGE")
+        Log.d("SIGNUP", "BEGINNING TO UPLOAD IMAGE")
         val fileName = UUID.randomUUID().toString()
         val ref = firebaseStorage!!.getReference("/images/$fileName")
 
@@ -128,13 +149,13 @@ class SignupActivity : AppCompatActivity() {
 
             ref.downloadUrl.addOnSuccessListener {
                 uploadToFirebaseDatabase(it.toString())
-                Log.d("SIGNUP","DOWNLOAD URI IS:::$it")
+                Log.d("SIGNUP", "DOWNLOAD URI IS:::$it")
             }
-                Toast.makeText(
-                    applicationContext,
-                    "Image uploaded successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+            Toast.makeText(
+                applicationContext,
+                "Image uploaded successfully",
+                Toast.LENGTH_SHORT
+            ).show()
 
         }
             .addOnFailureListener { exception ->
@@ -143,7 +164,7 @@ class SignupActivity : AppCompatActivity() {
             }
     }
 
-    private fun uploadToFirebaseDatabase(imgUrl:String){
+    private fun uploadToFirebaseDatabase(imgUrl: String) {
         Log.d("SIGNUP", "BEGINING TO UPLOADING TO DATABASE")
 
         val uuid = UUID.randomUUID().toString()
@@ -152,14 +173,14 @@ class SignupActivity : AppCompatActivity() {
 
         val user = User(userName, userEmail, imgUrl)
 
-        val  databaseRef = firebaseDatabase!!.getReference("users/$uuid")
+        val databaseRef = firebaseDatabase!!.getReference("users/$uuid")
 
         databaseRef.setValue(user).addOnSuccessListener {
             Log.d("SIGNUP", "SUCCESSFULLY UPLOADED THE RECORDS TO THE DB")
         }
-            .addOnFailureListener {
-                exception ->
-                Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { exception ->
+                Toast.makeText(applicationContext, exception.localizedMessage, Toast.LENGTH_SHORT)
+                    .show()
             }
 
 

@@ -24,6 +24,12 @@ class SigninActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
         firebaseStorage = FirebaseStorage.getInstance()
+
+        if (firebaseAuth!!.currentUser!=null){
+            val intent = Intent(applicationContext, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }
     }
 
     fun signup(view: View) {
@@ -37,6 +43,15 @@ class SigninActivity : AppCompatActivity() {
 
         val email = tvSigninEmail.text.toString()
         val password = etSigninPassword.text.toString()
+
+        if(email.isEmpty()){
+            tvSigninEmail.error="Email required"
+            return
+        }
+        if (password.isEmpty()){
+            etSigninPassword.error="Password required"
+            return
+        }
 
         if (email.isEmpty() || password.isEmpty()){
             Toast.makeText(applicationContext, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
