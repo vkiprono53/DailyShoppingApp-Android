@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/etAdd" android:title="Add Item" app:showAsAction="ifRoom">Add Item</item>
-    <item android:id="@+id/etShowItems" android:title="Show Items" app:showAsAction="ifRoom">Add Item</item>
+    <item android:id="@+id/etHomeAdd" android:title="Add Item" app:showAsAction="ifRoom">Add Item</item>
+    <item android:id="@+id/etHomeLogout" android:title="Logout" app:showAsAction="ifRoom">Logout</item>
 
 </menu>

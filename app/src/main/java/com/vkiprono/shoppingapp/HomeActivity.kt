@@ -1,23 +1,37 @@
 package com.vkiprono.shoppingapp
 
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.vkiprono.shoppingapp.models.Data
-import kotlinx.android.synthetic.main.input_data_dialog.*
-import kotlinx.android.synthetic.main.input_dialog_text2.*
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Item
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.shoppingitems.view.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.log
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import androidx.appcompat.view.menu.MenuView
+import java.time.LocalDate
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -36,6 +50,8 @@ class HomeActivity : AppCompatActivity() {
 
         databaseRef = FirebaseDatabase.getInstance().reference
 
+        dataFromDatabase()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -44,6 +60,19 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.etHomeLogout){
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(applicationContext,SigninActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun addShopping(view: View) {
 
         Log.d("ADD SHOPPING", "BEGINNING=====")
@@ -105,10 +134,21 @@ class HomeActivity : AppCompatActivity() {
             val uuid = UUID.randomUUID().toString()
             val userId = mAuth!!.uid
 
-            val data = Data(inputType, inputAmount, inputNote, Date().toString(), userId!!)
+
+            val date = LocalDate.now()
+            Log.d("SAVING TO DB", "DATE IS============>$date")
+
+            val formatter = DateTimeFormatter.ofPattern("dd, MM yyyy")
+            val text = date.format(formatter)
+            val parsedDate = LocalDate.parse(text, formatter)
+
+
+
+            Log.d("SAVING TO DB", "parsedDate DATE IS============>$parsedDate")
+
+            val data = Data(inputType, inputAmount, inputNote, parsedDate.toString(), userId!!)
 
             val firebaseRef = firebaseDatabase!!.getReference("shopping/$uuid")
-
 
             firebaseRef.setValue(data).addOnSuccessListener {
                 Log.d("SAVING TO DB", "=======Successfully saved to the database")
@@ -135,4 +175,53 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-}
+    private fun dataFromDatabase(){
+        val ref = FirebaseDatabase.getInstance().getReference("/shopping")
+        val adapter = GroupAdapter<GroupieViewHolder>()
+
+      //  ref.addListenerForSingleValueEvent(object :ValueEventListener{
+        ref.addValueEventListener(object :ValueEventListener{
+
+            override fun onDataChange(p0: DataSnapshot) {
+                var totalAmount = 0
+                p0.children.forEach {
+                    Log.d("Shopping", "===>${it.toString()}")
+                    val data = it.getValue(Data::class.java)
+                    adapter.add(ShoppingItems(data!!))
+                    totalAmount += data.amount
+
+                    homeTotalAmount.text = totalAmount.toString()
+                }
+//                homeRecyclerView.hasFixedSize()
+                homeRecyclerView.adapter = adapter
+
+
+
+            }
+
+
+            override fun onCancelled(p0: DatabaseError) {
+                Log.w("DataFromDB:", "Database error:::${p0.toException()}")
+            }
+
+        })
+    }
+
+
+    class ShoppingItems(val data: Data):Item<GroupieViewHolder>(){
+        override fun getLayout(): Int {
+
+            return R.layout.shoppingitems
+        }
+
+        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
+            viewHolder.itemView.tvdbType.text = data.type
+            viewHolder.itemView.tvdbDate.text = data.date.format("")
+            viewHolder.itemView.tvdbNote.text = data.note
+            viewHolder.itemView.tvdbAmount.text= data.amount.toString()
+        }
+    }
+
+    }
+
+
